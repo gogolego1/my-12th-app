@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   if (!apiKey) {
     return res.status(200).json({
       error_detected: true,
-      message: 'Vercel 대시보드에 GEMINI_API_KEY가 등록되지 않았습니다.'
+      message: 'Vercel 대시보드에 GEMINI_API_KEY가 등록되지 않았습니다. Settings → Environment Variables를 확인해 주세요.'
     });
   }
 
@@ -26,7 +26,6 @@ export default async function handler(req, res) {
               return { text: part.text };
             }
             if (part.type === 'image_url') {
-              // data:image/png;base64,XXXX → base64 데이터만 추출
               const url = part.image_url.url;
               const matches = url.match(/^data:(.+);base64,(.+)$/);
               if (matches) {
@@ -48,7 +47,7 @@ export default async function handler(req, res) {
       };
     });
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     const resp = await fetch(url, {
       method: 'POST',
@@ -67,7 +66,7 @@ export default async function handler(req, res) {
 
     const data = await resp.json();
 
-    // Gemini 응답 → OpenAI 형식으로 변환 (index.html이 그대로 동작하도록)
+    // Gemini 응답 → OpenAI 형식으로 변환
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     return res.status(200).json({
       choices: [{ message: { content: text } }]
