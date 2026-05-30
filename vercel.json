@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "routes": [
+    { 
+      "src": "/api/analyze", 
+      "dest": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions" 
+    },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
